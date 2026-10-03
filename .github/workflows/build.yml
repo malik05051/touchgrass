@@ -23,8 +23,8 @@ jobs:
             file: dist/TouchGrass
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
       - name: Install dependencies
@@ -36,12 +36,33 @@ jobs:
         run: python -c "import pygame, touchgrass; pygame.init(); g = touchgrass.Game(pygame.display.set_mode((touchgrass.WIDTH, touchgrass.HEIGHT))); g.start_game(); [g.update(1/60) for _ in range(3700)]; g.draw(); assert g.state == 'gameover'"
       - name: Build executable
         run: python -m PyInstaller --noconfirm --onefile --windowed --name TouchGrass touchgrass.py
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.artifact }}
           path: ${{ matrix.file }}
-      - name: Attach to release
-        if: startsWith(github.ref, 'refs/tags/v')
-        uses: softprops/action-gh-release@v2
+
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v7
         with:
-          files: ${{ matrix.file }}
+          path: artifacts
+      - name: Name the release files
+        run: |
+          mv artifacts/TouchGrass-Windows/TouchGrass.exe TouchGrass-Windows.exe
+          mv artifacts/TouchGrass-Linux/TouchGrass TouchGrass-Linux
+          chmod +x TouchGrass-Linux
+      - uses: softprops/action-gh-release@v3
+        with:
+          name: Touch Grass ${{ github.ref_name }}
+          generate_release_notes: true
+          body: |
+            **Windows:** download `TouchGrass-Windows.exe` and double-click it.
+            Windows SmartScreen may warn because the file isn't code-signed: click "More info" then "Run anyway".
+
+            **Linux:** download `TouchGrass-Linux`, then `chmod +x TouchGrass-Linux && ./TouchGrass-Linux`.
+          files: |
+            TouchGrass-Windows.exe
+            TouchGrass-Linux

@@ -17,9 +17,9 @@ Settings and high score are saved to `%APPDATA%\TouchGrass\save.json` on Windows
 (`~/.local/share/TouchGrass/save.json` on Linux).
 
 ## Play
-**Download:** grab `TouchGrass.exe` from the latest
-[GitHub Actions build](../../actions/workflows/build.yml) (artifact *TouchGrass-Windows*) or from
-a release. Then just double-click it.
+**Download:** get `TouchGrass-Windows.exe` from the
+[latest release](../../releases/latest) and double-click it. Windows SmartScreen may warn because
+the file isn't code-signed: click "More info" then "Run anyway".
 
 **From source** (Python 3.9+):
 ```
