@@ -6,6 +6,11 @@ on:
     tags: ["v*"]
   pull_request:
   workflow_dispatch:
+    inputs:
+      version:
+        description: "Release tag to create, e.g. v1.0.0 (leave empty to only build)"
+        required: false
+        default: ""
 
 permissions:
   contents: write
@@ -43,7 +48,7 @@ jobs:
 
   release:
     needs: build
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: startsWith(github.ref, 'refs/tags/v') || inputs.version != ''
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v7
@@ -56,7 +61,9 @@ jobs:
           chmod +x TouchGrass-Linux
       - uses: softprops/action-gh-release@v3
         with:
-          name: Touch Grass ${{ github.ref_name }}
+          tag_name: ${{ inputs.version || github.ref_name }}
+          target_commitish: ${{ github.sha }}
+          name: Touch Grass ${{ inputs.version || github.ref_name }}
           generate_release_notes: true
           body: |
             **Windows:** download `TouchGrass-Windows.exe` and double-click it.

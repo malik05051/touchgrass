@@ -32,7 +32,7 @@ Double-click `build.bat` (or run it from a terminal). It installs
 [pygame-ce](https://pyga.me/) and [PyInstaller](https://pyinstaller.org/) and writes
 `dist\TouchGrass.exe`. On Linux, run `./build.sh`.
 
-Pushing a tag like `v1.0` makes the workflow attach the Windows and Linux builds to a GitHub release.
+To publish a release, push a tag like `v1.1.0`, or open **Actions → Build → Run workflow** and enter a version. The workflow builds Windows and Linux and attaches both to the release.
 
 ## Controls
 | Action | Input |
